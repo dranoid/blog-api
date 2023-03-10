@@ -3,6 +3,7 @@ const express = require("express");
 require("./db/mongoose");
 const Post = require("./model/post");
 const postRouter = require("./router/posts");
+const userRouter = require("./router/user");
 // const hbs = require("hbs");
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(express.static(publicPath));
 
 app.use(express.json());
 app.use("/post", postRouter);
+app.use("/users", userRouter);
 
 app.get("/", async (req, res) => {
   const posts = await Post.find();

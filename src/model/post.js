@@ -7,7 +7,11 @@ const postSchema = mongoose.Schema(
       required: true,
       trim: true,
     },
-    author: String,
+    author: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
     body: {
       type: String,
       required: true,

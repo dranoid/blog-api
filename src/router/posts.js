@@ -1,11 +1,12 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const Post = require("../model/post");
+const auth = require("../middleware/auth");
 
 const router = new express.Router();
 
-router.post("/", async (req, res) => {
-  const post = new Post(req.body);
+router.post("/", auth, async (req, res) => {
+  const post = new Post({ ...req.body, author: req.user._id });
   try {
     await post.save();
     res.status(201).send({ post });
@@ -36,7 +37,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.patch("/:id", async (req, res) => {
+router.patch("/:id", auth, async (req, res) => {
   const id = req.params.id;
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).send();
@@ -53,7 +54,11 @@ router.patch("/:id", async (req, res) => {
   }
 
   try {
-    const post = await Post.findById(id);
+    const post = await Post.findOne({ _id: id, author: req.user._id });
+    console.log(post);
+    if (!post) {
+      return res.status(404).send();
+    }
     updates.forEach((update) => {
       post[update] = req.body[update];
     });
@@ -62,18 +67,21 @@ router.patch("/:id", async (req, res) => {
 
     res.send(post);
   } catch (error) {
-    res.status(500).send();
+    res.status(500).send(error);
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
   const id = req.params.id;
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).send();
   }
 
   try {
-    const post = await Post.findByIdAndDelete(id);
+    const post = await Post.findOneAndDelete({ _id: id, author: req.user._id });
+    if (!post) {
+      return res.status(404).send();
+    }
     res.send(post);
   } catch (error) {
     res.status(500).send();
