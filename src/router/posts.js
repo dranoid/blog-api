@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const Post = require("../model/post");
 const auth = require("../middleware/auth");
+const { processDate } = require("../utils/date");
 
 const router = new express.Router();
 
@@ -30,8 +31,15 @@ router.get("/:id", async (req, res) => {
     return res.status(404).send();
   }
   try {
-    const post = await Post.findById(id);
-    res.send(post);
+    const post = await Post.findById(id)
+      .populate({
+        path: "author",
+        select: "_id name",
+      })
+      .lean();
+    const date = new Date(post.createdAt);
+    post.createdAt = processDate(date);
+    res.render("post", { post });
   } catch (error) {
     res.status(500).send();
   }

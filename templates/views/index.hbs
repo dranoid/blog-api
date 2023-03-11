@@ -4,27 +4,86 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="assets/img/favicon.ico">
     <title>Blog</title>
+    <!-- Bootstrap core CSS -->
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Fonts -->
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Righteous" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="assets/css/mediumish.css" rel="stylesheet">
 </head>
 <body>
-    <h1>Cable's blog</h1>
-    <h3>Posts</h3>
-    {{#each posts}}
-    <div>
-        <h2>{{title}}</h2>
-        <p>{{body}}</p>
-        Comments:
-        <ul>
-            {{#each comments}}
-            <li>{{text}}</li>
+    {{>header}}
+    <!-- Begin Site Title
+    ================================================== -->
+    <div class="container">
+        <div class="mainheading">
+            <h1 class="sitetitle">Dranoid.io</h1>
+            <p class="lead">
+                A scratchpad for my thoughts from the most intriguing to the most inane
+            </p>
+        </div>
+        <!-- End Site Title
+    ================================================== -->
+
+
+
+    <!-- Begin List Posts
+    	================================================== -->
+    <section class="recent-posts">
+        <div class="section-title">
+            <h2><span>All Stories</span></h2>
+        </div>
+        <div class="card-columns listrecent">
+            {{#each posts}}
+            <!-- begin post -->
+        
+            <div class="card">
+                <a href="/post/{{_id}}">
+                {{#with ../pickNum}}
+                    <img class="img-fluid" src="assets/img/demopic/{{num}}.jpg" alt="">
+                {{/with}}
+                </a>
+                <div class="card-block">
+                    <h2 class="card-title"><a href="/post/{{_id}}">{{title}}</a></h2>
+                    <h4 class="card-text">{{#if description}}
+                    {{description}}
+                    {{else}}
+                    The post description is meant to go here
+                    {{/if}}
+                    </h4>
+                    <div class="metafooter">
+                        <div class="wrapfooter">
+                            <span class="meta-footer-thumb">
+                                <a href="/users/{{author._id}}"><img class="author-thumb"
+                                        src="https://www.gravatar.com/avatar/e56154546cf4be74e393c62d1ae9f9d4?s=250&amp;d=mm&amp;r=x"
+                                        alt="Sal"></a>
+                            </span>
+                            <span class="author-meta">
+                                <span class="post-name"><a href="/users/{{author._id}}">{{author.name}}</a></span><br />
+                                <span class="post-date">{{createdAt}}</span><span class="dot"></span><span
+                                    class="post-read">6 min read</span>
+                            </span>
+                            <span class="post-read-more"><a href="/post/{{_id}}" title="Read Story"><svg class="svgIcon-use"
+                                        width="25" height="25" viewbox="0 0 25 25">
+                                        <path
+                                            d="M19 6c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v14.66h.012c.01.103.045.204.12.285a.5.5 0 0 0 .706.03L12.5 16.85l5.662 4.126a.508.508 0 0 0 .708-.03.5.5 0 0 0 .118-.285H19V6zm-6.838 9.97L7 19.636V6c0-.55.45-1 1-1h9c.55 0 1 .45 1 1v13.637l-5.162-3.668a.49.49 0 0 0-.676 0z"
+                                            fill-rule="evenodd"></path>
+                                    </svg></a></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end post -->
             {{/each}}
-        </ul>
-        {{#if author}}
-        <h4>{{author}}</h4>
-        {{else}}
-        <h4>Unknown Author</h4>
-        {{/if}}
+          </div>
+    </section>
+    <!-- End List Posts
+    	================================================== -->
+    
     </div>
-    {{/each}}
+    {{>footer}}
 </body>
 </html>

@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const User = require("../model/user");
 const auth = require("../middleware/auth");
+const { processDate } = require("../utils/date");
 
 const router = new express.Router();
 
@@ -47,17 +48,23 @@ router.get("/me", auth, async (req, res) => {
   res.send({ user: req.user, posts: req.user.posts });
 });
 
-router.get("/:id", auth, async (req, res) => {
+router.get("/:id", async (req, res) => {
   const id = req.params.id;
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).send();
   }
 
   try {
-    const user = await User.findById(id);
-    res.send(user);
+    const user = await User.findById(id).populate("posts").lean();
+
+    user.posts.forEach((post) => {
+      post.createdAt = processDate(post.createdAt);
+    });
+    const posts = user.posts;
+
+    res.render("author", { user, posts });
   } catch (error) {
-    req.status(500).send();
+    res.status(500).send();
   }
 });
 

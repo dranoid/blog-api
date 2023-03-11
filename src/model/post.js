@@ -12,6 +12,7 @@ const postSchema = mongoose.Schema(
       required: true,
       ref: "User",
     },
+    description: String,
     body: {
       type: String,
       required: true,
