@@ -37,6 +37,9 @@ router.get("/:id", async (req, res) => {
         select: "_id name",
       })
       .lean();
+    if (!post) {
+      return res.status(404).send();
+    }
     const date = new Date(post.createdAt);
     post.createdAt = processDate(date);
     res.render("post", { post });
@@ -63,7 +66,6 @@ router.patch("/:id", auth, async (req, res) => {
 
   try {
     const post = await Post.findOne({ _id: id, author: req.user._id });
-    console.log(post);
     if (!post) {
       return res.status(404).send();
     }
@@ -73,7 +75,7 @@ router.patch("/:id", auth, async (req, res) => {
 
     await post.save();
 
-    res.send(post);
+    res.send({ post });
   } catch (error) {
     res.status(500).send(error);
   }
@@ -90,7 +92,7 @@ router.delete("/:id", auth, async (req, res) => {
     if (!post) {
       return res.status(404).send();
     }
-    res.send(post);
+    res.send({ post });
   } catch (error) {
     res.status(500).send();
   }
@@ -104,13 +106,17 @@ router.post("/:id/comment", async (req, res) => {
 
   try {
     const post = await Post.findById(id);
+    if (!post) {
+      return res.status(404).send();
+    }
+
     req.body["comments"].forEach((comment) => {
       post.comments.push(comment);
     });
     await post.save();
     res.status(201).send();
   } catch (error) {
-    res.status(500).send();
+    res.status(500).send(error);
   }
 });
 

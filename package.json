@@ -6,7 +6,10 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "env-cmd -f ./config/dev.env nodemon src/index.js -e js,hbs",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "env-cmd -f ./config/test.env jest --watchAll --runInBand"
+  },
+  "jest":{
+    "testEnvironment":"node"
   },
   "keywords": [],
   "author": "",
@@ -19,5 +22,9 @@
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.0",
     "validator": "^13.9.0"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0",
+    "supertest": "^6.3.3"
   }
 }

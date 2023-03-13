@@ -57,6 +57,10 @@ router.get("/:id", async (req, res) => {
   try {
     const user = await User.findById(id).populate("posts").lean();
 
+    if (!user) {
+      return res.status(404).send();
+    }
+
     user.posts.forEach((post) => {
       post.createdAt = processDate(post.createdAt);
     });
@@ -76,6 +80,9 @@ router.post("/follow/:id", auth, async (req, res) => {
 
   try {
     const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).send();
+    }
     user.addToSetIfNotExists({ user: req.user._id }, "followers");
     req.user.addToSetIfNotExists({ user: user._id }, "following");
     await user.save();
@@ -142,19 +149,5 @@ router.delete("/me", auth, async (req, res) => {
     res.status(500).send(error);
   }
 });
-
-async function meme() {
-  try {
-    const user = await User.findById("640ab5cbea3d231a4f13b882");
-
-    await user.populate("posts");
-    // console.log(user);
-    console.log(user.posts);
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-// meme();
 
 module.exports = router;
